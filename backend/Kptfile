@@ -1,0 +1,28 @@
+apiVersion: kpt.dev/v1
+kind: Kptfile
+metadata:
+  name: backend
+  annotations:
+    config.kubernetes.io/local-config: "true"
+upstream:
+  type: git
+  git:
+    repo: git@github.com:rawkode/kpt-blueprints
+    directory: /basens
+    ref: v0
+  updateStrategy: resource-merge
+upstreamLock:
+  type: git
+  git:
+    repo: git@github.com:rawkode/kpt-blueprints
+    directory: /basens
+    ref: basens/v0
+    commit: dd87c8abb1b2ae696ed6b075cca2d899549a49cf
+info:
+  description: kpt package for provisioning namespace
+pipeline:
+  mutators:
+    - image: gcr.io/kpt-fn/set-namespace:v0.4.1
+      configPath: package-context.yaml
+    - image: gcr.io/kpt-fn/apply-replacements:v0.1.1
+      configPath: update-rolebinding.yaml
